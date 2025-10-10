@@ -1,17 +1,33 @@
-import React, { useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image, Alert } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import Toast from 'react-native-toast-message';
 
-import Logo from '../assets/images/taskflow.png';
+import { AuthContext } from '../../context/index';
+import api from '../../service/index';
+import Logo from '../../assets/images/taskflow.png';
 
 const { width, height } = Dimensions.get('window');
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useContext(AuthContext);
 
-  const login = async () => {
-    console.log('LOGIN');
+  const handleLogin = async () => {
+    try{
+      const res = await api.post('auth/login', {
+        email,
+        password
+      })
+
+      await login(res.data.token);
+    }catch(error){
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao efetuar login!'
+      });
+    }
   }
 
   const register = async () => {
@@ -52,7 +68,7 @@ const Login = () => {
         <TextInput placeholder='Email' style={styles.input} value={email} onChangeText={(e) => setEmail(e)}/>
         <TextInput placeholder='Senha' secureTextEntry style={styles.input} value={password} onChangeText={(e) => setPassword(e)}/>
 
-        <TouchableOpacity style={styles.button} onPress={login}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
