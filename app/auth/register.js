@@ -2,40 +2,49 @@ import React, { useState, useContext } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import Toast from 'react-native-toast-message';
-import { useRouter } from 'expo-router'
+import { useRouter } from 'expo-router';
 
-import { AuthContext } from '../../context/index';
 import api from '../../service/index';
 import Logo from '../../assets/images/taskflow.png';
 
 const { width, height } = Dimensions.get('window');
 
-const Login = () => {
+const Register = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useContext(AuthContext);
 
   const router = useRouter();
 
-  const handleLogin = async () => {
-    try{
-      const res = await api.post('auth/login', {
-        email,
-        password
-      })
-
-      await login(res.data.token);
-    }catch(error){
+  const handleRegister = async () => {
+    if (!name || !email || !password) {
       Toast.show({
         type: 'error',
-        text1: 'Erro ao efetuar login!'
+        text1: 'Preencha todos os campos!',
+      });
+      return;
+    }
+
+    try {
+      await api.post('auth/register', { name, email, password });
+
+      Toast.show({
+        type: 'success',
+        text1: 'Cadastro realizado com sucesso!',
+      });
+
+      goToLogin()
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao cadastrar usuário!',
       });
     }
-  }
+  };
 
-  const register = async () => {
-    router.push('/auth/register');
-  }
+  const goToLogin = () => {
+    router.push('/auth/login');
+  };
 
   return (
     <View style={styles.container}>
@@ -47,44 +56,52 @@ const Login = () => {
           style={styles.curve}
         >
           <Path
-            d={`
-              M0,80 
-              Q${width / 2},160 ${width},80 
-              L${width},0 
-              L0,0 
-              Z
-            `}
+            d={`M0,80 Q${width / 2},160 ${width},80 L${width},0 L0,0 Z`}
             fill='#7B2FF7'
           />
         </Svg>
 
         <View style={styles.avatarCircle}>
-          <Image
-            source={Logo}
-            style={styles.avatarInner}
-            resizeMode="contain"
-          />
+          <Image source={Logo} style={styles.avatarInner} resizeMode='contain' />
         </View>
       </View>
 
       <View style={styles.formContainer}>
-        <TextInput placeholder='Email' style={styles.input} value={email} onChangeText={(e) => setEmail(e)}/>
-        <TextInput placeholder='Senha' secureTextEntry style={styles.input} value={password} onChangeText={(e) => setPassword(e)}/>
+        <TextInput
+          placeholder='Nome completo'
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          placeholder='Email'
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          keyboardType='email-address'
+        />
+        <TextInput
+          placeholder='Senha'
+          secureTextEntry
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+        />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Entrar</Text>
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Cadastrar</Text>
         </TouchableOpacity>
 
         <View style={styles.formBottom}>
-          <Text>Não tem uma conta? </Text>
-          <TouchableOpacity onPress={register}>
-            <Text style={styles.signupLink}>Cadastre-se</Text>
+          <Text>Já tem uma conta? </Text>
+          <TouchableOpacity onPress={goToLogin}>
+            <Text style={styles.loginLink}>Entrar</Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -121,6 +138,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 60,
   },
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 25,
+  },
   input: {
     width: '100%',
     backgroundColor: '#FFF',
@@ -144,19 +167,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  signupLink: {
+  loginLink: {
     color: '#7B2FF7',
     fontWeight: 'bold',
-  },
-  register: {
-    alignItems: 'center',
-    backgroundColor: 'blue'
   },
   formBottom: {
     flexDirection: 'row',
     marginTop: 20,
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 });
 
-export default Login;
+export default Register;

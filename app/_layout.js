@@ -26,7 +26,7 @@ const ProtectedDrawer = () => {
       <Drawer.Screen
         name='screens/home'
         options={{
-          title: 'Home',
+          title: 'Início',
           drawerIcon: ({ color, size }) => (
             <Ionicons name='home-outline' size={size} color={color} />
           ),
@@ -36,6 +36,16 @@ const ProtectedDrawer = () => {
         name='auth/login'
         options={{
           title: 'Sair',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name='log-out-outline' size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name='auth/register'
+        options={{
+          title: 'Cadastrar',
+          drawerItemStyle: { display: 'none' },
           drawerIcon: ({ color, size }) => (
             <Ionicons name='log-out-outline' size={size} color={color} />
           ),
