@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image, ActivityIndicator } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import Toast from 'react-native-toast-message';
 import { useRouter } from 'expo-router'
@@ -13,11 +13,12 @@ const { width, height } = Dimensions.get('window');
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useContext(AuthContext);
+  const { login, loading, setLoading } = useContext(AuthContext);
 
   const router = useRouter();
 
   const handleLogin = async () => {
+    setLoading(true);
     try{
       const res = await api.post('auth/login', {
         email,
@@ -31,10 +32,19 @@ const Login = () => {
         text1: 'Erro ao efetuar login!'
       });
     }
+    setLoading(false);
   }
 
   const register = async () => {
     router.push('/auth/register');
+  }
+
+  if (loading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size='large' color='#7B2FF7' />
+      </View>
+    );
   }
 
   return (
@@ -156,7 +166,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 20,
     justifyContent: 'center'
-  }
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default Login;

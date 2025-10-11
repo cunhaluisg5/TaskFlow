@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image, ActivityIndicator } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import Toast from 'react-native-toast-message';
 import { useRouter } from 'expo-router';
 
 import api from '../../service/index';
+import { AuthContext } from '../../context/index';
 import Logo from '../../assets/images/taskflow.png';
 
 const { width, height } = Dimensions.get('window');
@@ -15,6 +16,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
 
   const router = useRouter();
+  const { loading, setLoading } = useContext(AuthContext);
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
@@ -25,6 +27,7 @@ const Register = () => {
       return;
     }
 
+    setLoading(true);
     try {
       await api.post('auth/register', { name, email, password });
 
@@ -33,18 +36,29 @@ const Register = () => {
         text1: 'Cadastro realizado com sucesso!',
       });
 
-      goToLogin()
+      setTimeout(() => {
+        goToLogin();
+      }, 1000);
     } catch (error) {
       Toast.show({
         type: 'error',
         text1: 'Erro ao cadastrar usuário!',
       });
     }
+    setLoading(false);
   };
 
   const goToLogin = () => {
     router.push('/auth/login');
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size='large' color='#7B2FF7' />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -175,6 +189,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 20,
     justifyContent: 'center',
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
