@@ -115,6 +115,16 @@ const ProtectedDrawer = () => {
       />
 
       <Drawer.Screen
+        name='screens/completeTasksScreen'
+        options={{
+          title: 'Tarefas Concluídas',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name='checkmark-circle' size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
         name='index'
         options={{ drawerItemStyle: { display: 'none' } }}
       />
