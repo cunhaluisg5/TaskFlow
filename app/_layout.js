@@ -105,11 +105,11 @@ const ProtectedDrawer = () => {
       }}
     >
       <Drawer.Screen
-        name='screens/home'
+        name='screens/incompleteTasksScreen'
         options={{
-          title: 'Início',
+          title: 'Tarefas Pendentes',
           drawerIcon: ({ color, size }) => (
-            <Ionicons name='home-outline' size={size} color={color} />
+            <Ionicons name='time-outline' size={size} color={color} />
           ),
         }}
       />
