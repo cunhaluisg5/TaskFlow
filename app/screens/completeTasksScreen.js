@@ -16,6 +16,7 @@ const CompleteTasksScreen = () => {
   }, [])
 
   const loadTasks = async () => {
+    setLoading(true);
     if (userToken) {
       try {
         const response = await api.get('tasks?status=true', {
@@ -121,7 +122,7 @@ const CompleteTasksScreen = () => {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size='large' color='#7B2FF7' style={{ marginTop: 20 }} />
+        <ActivityIndicator size='large' color='#7B2FF7' style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} />
       ) : (
         <>
           <FlatList
