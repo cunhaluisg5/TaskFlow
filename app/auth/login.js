@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image, ActivityIndicator } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import Toast from 'react-native-toast-message';
-import { useRouter } from 'expo-router'
+import { useRouter } from 'expo-router';
 
 import { AuthContext } from '../../context/index';
 import api from '../../service/index';

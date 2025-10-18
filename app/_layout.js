@@ -135,6 +135,17 @@ const ProtectedDrawer = () => {
       />
 
       <Drawer.Screen
+        name='screens/updateTaskScreen'
+        options={{
+          title: 'Atualizar Tarefa',
+          drawerItemStyle: { display: 'none' },
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name='add-circle-outline' size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
         name='index'
         options={{ drawerItemStyle: { display: 'none' } }}
       />

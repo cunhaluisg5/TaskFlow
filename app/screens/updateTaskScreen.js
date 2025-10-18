@@ -1,17 +1,43 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 
 import api from '../../service/index';
 import { AuthContext } from '../../context/index';
 
-const RegisterTaskScreen = () => {
+const UpdateTaskScreen = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const { userToken, setLoading, loading } = useContext(AuthContext);
+  const { id } = useLocalSearchParams();
 
-  const registerTask = async () => {
+  useEffect(() => {
+    if (id) {
+      loadTask();
+    }
+  }, [id]);
+
+  const loadTask = async () => {
+    if (userToken) {
+      try {
+        const response = await api.get(`tasks/${id}`, {
+          headers: {
+            Authorization: `${userToken}`,
+          },
+        });
+        const tasksData = response.data;
+        setTitle(tasksData.title);
+        setDescription(tasksData.description);
+      } catch (error) {
+        console.log('Erro ao buscar tarefa.')
+      }
+    }
+    setLoading(false);
+  };
+
+  const updateTask = async () => {
     if (!title.trim() || !description.trim()) {
       Toast.show({
         type: 'error',
@@ -24,7 +50,7 @@ const RegisterTaskScreen = () => {
     try {
       setLoading(true);
 
-      await api.post('tasks', {
+      await api.put(`tasks/${id}`, {
         title, description
       },
       {
@@ -35,7 +61,7 @@ const RegisterTaskScreen = () => {
 
       Toast.show({
         type: 'success',
-        text1: 'Tarefa cadastrada com sucesso!',
+        text1: 'Tarefa atualizada com sucesso!',
       });
 
       setTitle('');
@@ -43,7 +69,7 @@ const RegisterTaskScreen = () => {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Erro ao salvar a tarefa',
+        text1: 'Erro ao atualizar a tarefa',
         text2: 'Tente novamente mais tarde.'
       });
     } finally {
@@ -76,7 +102,7 @@ const RegisterTaskScreen = () => {
 
       <TouchableOpacity
         style={[styles.button, loading && { opacity: 0.6 }]}
-        onPress={registerTask}
+        onPress={updateTask}
         disabled={loading}
       >
         {loading ? (
@@ -84,7 +110,7 @@ const RegisterTaskScreen = () => {
         ) : (
           <>
             <Ionicons name='save-outline' size={20} color='#fff' />
-            <Text style={styles.buttonText}>Salvar Tarefa</Text>
+            <Text style={styles.buttonText}>Atualizar Tarefa</Text>
           </>
         )}
       </TouchableOpacity>
@@ -141,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterTaskScreen;
+export default UpdateTaskScreen;

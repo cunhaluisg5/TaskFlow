@@ -16,7 +16,6 @@ const CompleteTasksScreen = () => {
   }, [])
 
   const loadTasks = async () => {
-    setLoading(true);
     if (userToken) {
       try {
         const response = await api.get('tasks?status=true', {
@@ -38,10 +37,6 @@ const CompleteTasksScreen = () => {
     setSelectedTasks((prev) =>
       prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
     )
-  }
-
-  const handleEditar = (task) => {
-    console.log('Editar', `Função para editar: ${task.title}`)
   }
 
   const deleteTasks = async (taskId) => {
@@ -91,9 +86,6 @@ const CompleteTasksScreen = () => {
         <View style={styles.taskHeader}>
           <Text style={styles.taskTitle}>{item.title}</Text>
           <View style={styles.taskActions}>
-            <TouchableOpacity onPress={() => handleEditar(item)} style={styles.iconButton}>
-              <Ionicons name='pencil' size={20} color='#7B2FF7' />
-            </TouchableOpacity>
             <TouchableOpacity onPress={() => deleteTasks(item.id)} style={styles.iconButton}>
               <Ionicons name='trash' size={20} color='#FF3B30' />
             </TouchableOpacity>

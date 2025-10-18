@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
+import { useRouter } from 'expo-router';
 
 import api from '../../service/index';
 import { AuthContext } from '../../context/index';
@@ -10,6 +11,8 @@ const IncompleteTasksScreen = () => {
   const [tasks, setTasks] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
   const { userToken, setLoading, loading } = useContext(AuthContext);
+
+  const router = useRouter();
 
   useEffect(() => {
     loadTasks();
@@ -78,8 +81,8 @@ const IncompleteTasksScreen = () => {
     }
   }
 
-  const handleEditar = (task) => {
-    console.log('Editar', `Função para editar: ${task.title}`)
+  const updateTask = (taskId) => {
+    router.push({ pathname: '/screens/updateTaskScreen', params: { id: taskId } });
   }
 
   const deleteTasks = async (taskId) => {
@@ -129,7 +132,7 @@ const IncompleteTasksScreen = () => {
         <View style={styles.taskHeader}>
           <Text style={styles.taskTitle}>{item.title}</Text>
           <View style={styles.taskActions}>
-            <TouchableOpacity onPress={() => handleEditar(item)} style={styles.iconButton}>
+            <TouchableOpacity onPress={() => updateTask(item.id)} style={styles.iconButton}>
               <Ionicons name='pencil' size={20} color='#7B2FF7' />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => deleteTasks(item.id)} style={styles.iconButton}>
